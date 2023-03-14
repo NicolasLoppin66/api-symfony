@@ -178,4 +178,9 @@ class Album
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->title;
+    }
 }

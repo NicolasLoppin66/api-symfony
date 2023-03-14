@@ -6,8 +6,11 @@ use App\Repository\SongRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: SongRepository::class)]
+#[Vich\Uploadable]
 class Song
 {
     #[ORM\Id]
@@ -18,14 +21,17 @@ class Song
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $filePath = null;
 
-    #[ORM\Column]
+    //Ajout d'une nouvelle propriété
+    #[Vich\UploadableField(mapping: 'songs', fileNameProperty: 'filePath')]
+    private ?File $filePathSong = null;
+
+    #[ORM\Column(nullable: true)]
     private ?int $duration = null;
 
     #[ORM\ManyToOne(inversedBy: 'songs')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Album $album = null;
 
     #[ORM\ManyToMany(targetEntity: Playlist::class, inversedBy: 'songs')]
@@ -63,6 +69,24 @@ class Song
         $this->filePath = $filePath;
 
         return $this;
+    }
+
+    // Ici on ajoute les methodes de pathFileSong
+
+    /**
+     * @return File|null
+     */
+    public function getFilePathSong(): ?File
+    {
+        return $this->filePathSong;
+    }
+
+    /**
+     * @param File|null $filePathSong
+     */
+    public function setFilePathSong(?File $filePathSong): void
+    {
+        $this->filePathSong = $filePathSong;
     }
 
     public function getDuration(): ?int

@@ -55,7 +55,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('<img src="/image/logo2.png" style="width: 30px; height: 30px;"><span> Api Symfony Spotify</span>')
-            ->setFaviconPath('/image/logo.png');
+            ->setFaviconPath('/image/logo2.png');
     }
 
     public function configureMenuItems(): iterable

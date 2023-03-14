@@ -3,10 +3,17 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Song;
+use Doctrine\ORM\Mapping\Id;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class SongCrudController extends AbstractCrudController
 {
@@ -21,6 +28,26 @@ class SongCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Liste de chanson')
             ->setPageTitle(Crud::PAGE_EDIT, 'Modifier une chanson')
             ->setPageTitle(Crud::PAGE_NEW, 'Ajouter une chanson');
+    }
+
+    public function configureFields(string $pageName): iterable
+    {
+        return [
+            IdField::new('id')->hideOnForm(),
+            TextField::new('title', 'Titre de la chanson'),
+
+            // Détournement du textField pour Vich
+            // TextField::new('filePathSong', 'Choisir un fichier mp3')
+            // ->setFormType(VichFileType::class),
+            // TextField::new('filePath', 'mp3')
+            //     ->hideOnForm(),
+            ImageField::new('filePath', 'Choisir mp3')
+                ->setBasePath('/upload/files/music')
+                ->setUploadDir('public/upload/files/music')
+                ->hideOnIndex(),
+            NumberField::new('duration', 'Durée du titre'),
+            AssociationField::new('album', 'Album associé'),
+        ];
     }
 
     // Function pour agir sur les boutons d'actions
