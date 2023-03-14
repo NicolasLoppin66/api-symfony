@@ -80,7 +80,6 @@ class DashboardController extends AbstractDashboardController
                     'fa fa-eye',
                     Genre::class
                 )
-                    ->setAction(Crud::PAGE_NEW),
             ]);
         yield MenuItem::subMenu(
             'Gestion Album',
@@ -98,7 +97,6 @@ class DashboardController extends AbstractDashboardController
                     'fa fa-eye',
                     Album::class
                 )
-                    ->setAction(Crud::PAGE_NEW),
             ]);
         yield MenuItem::subMenu(
             'Gestion Chansons',
@@ -111,7 +109,7 @@ class DashboardController extends AbstractDashboardController
                     'fa fa-plus',
                     Song::class
                 )
-                ->setAction(Crud::PAGE_NEW),
+                    ->setAction(Crud::PAGE_NEW),
                 MenuItem::linkToCrud(
                     'Voir les chansons',
                     'fa fa-eye',
@@ -129,7 +127,7 @@ class DashboardController extends AbstractDashboardController
                     'fa fa-plus',
                     Artist::class
                 )
-                ->setAction(Crud::PAGE_NEW),
+                    ->setAction(Crud::PAGE_NEW),
                 MenuItem::linkToCrud(
                     'Voir les artiste',
                     'fa fa-eye',

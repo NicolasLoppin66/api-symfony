@@ -29,9 +29,9 @@ class ArtistCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-          IdField::new('id')->hideOnForm(),
-          TextField::new('name', 'Nom de l\'artiste'),
-          TextEditorField::new('biography', 'Biographie de l\'artiste')
+            IdField::new('id')->hideOnForm(),
+            TextField::new('name', 'Nom de l\'artiste'),
+            TextEditorField::new('biography', 'Biographie de l\'artiste')
         ];
     }
 
@@ -60,7 +60,7 @@ class ArtistCrudController extends AbstractCrudController
                     ->setIcon('fa fa-trash')
                     ->setLabel('Supprimer'))
 
-            // Customiser les boutons de la page d'édition
+            // Customizer les boutons de la page d'édition
             ->update(
                 Crud::PAGE_EDIT,
                 Action::SAVE_AND_RETURN,
@@ -82,7 +82,6 @@ class ArtistCrudController extends AbstractCrudController
                 Crud::PAGE_NEW,
                 Action::SAVE_AND_ADD_ANOTHER,
                 fn(Action $action) => $action
-                    ->setLabel('Enregsitrer et ajouter un nouveaux'))
-            ;
+                    ->setLabel('Enregsitrer et ajouter un nouveaux'));
     }
 }

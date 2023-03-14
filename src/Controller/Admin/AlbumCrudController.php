@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -113,5 +114,21 @@ class AlbumCrudController extends AbstractCrudController
                 Action::SAVE_AND_ADD_ANOTHER,
                 fn(Action $action) => $action
                     ->setLabel('Enregsitrer et ajouter un nouveaux'));
+    }
+
+    // Persister lors de la création d'un album, on génère la date
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Album) return;
+        $entityInstance->setCreatedAt(new \DateTime());
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    // Persister lors de la modification, on génère la date
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Album) return;
+        $entityInstance->setUpdatedAt(new \DateTime());
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

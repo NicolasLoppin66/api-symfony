@@ -70,7 +70,6 @@ class SongCrudController extends AbstractCrudController
                 Crud::PAGE_NEW,
                 Action::SAVE_AND_ADD_ANOTHER,
                 fn(Action $action) => $action
-                    ->setLabel('Enregsitrer et ajouter un nouveaux'))
-            ;
+                    ->setLabel('Enregsitrer et ajouter un nouveaux'));
     }
 }
