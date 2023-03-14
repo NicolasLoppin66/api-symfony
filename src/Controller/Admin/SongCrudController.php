@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Song;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Id;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -13,6 +14,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use getID3;
+use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class SongCrudController extends AbstractCrudController
@@ -45,7 +48,16 @@ class SongCrudController extends AbstractCrudController
                 ->setBasePath('/upload/files/music')
                 ->setUploadDir('public/upload/files/music')
                 ->hideOnIndex(),
-            NumberField::new('duration', 'Durée du titre'),
+            TextField::new('filePath', 'Aperçu')
+            ->hideOnForm()
+            ->formatValue(function ($value, $entity) {
+                return '
+                    <audio controls>
+                        <source src="/upload/files/music/".$value. type="audio/mpeg">
+                    </audio>
+                ';
+            }),
+            NumberField::new('duration', 'Durée du titre')->hideOnForm(),
             AssociationField::new('album', 'Album associé'),
         ];
     }
@@ -74,6 +86,19 @@ class SongCrudController extends AbstractCrudController
                 fn(Action $action) => $action
                     ->setIcon('fa fa-trash')
                     ->setLabel('Supprimer'))
+            ->add(
+                Crud::PAGE_INDEX,
+                Action::DETAIL
+            )
+            ->update(
+                Crud::PAGE_INDEX,
+                Action::DETAIL,
+                fn(
+                    Action $action
+                ) => $action
+                    ->setIcon('fa fa-info')
+                    ->setLabel('Information'),
+            )
 
             // Customiser les boutons de la page d'édition
             ->update(
@@ -98,5 +123,37 @@ class SongCrudController extends AbstractCrudController
                 Action::SAVE_AND_ADD_ANOTHER,
                 fn(Action $action) => $action
                     ->setLabel('Enregsitrer et ajouter un nouveaux'));
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Song) return;
+        $file = $entityInstance->getFilePath();
+        $entityInstance->setDuration($this->getDurationFile($file));
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if (!$entityInstance instanceof Song) return;
+        $file = $entityInstance->getFilePath();
+        $entityInstance->setDuration($this->getDurationFile($file));
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    public function getDurationFile( $file )
+    {
+        $getId3 = new getID3;
+        // récupérer le chemin du fichier
+        $basePath = $this->getParameter('kernel.project_dir') . '/public/upload/files/music/';
+        // récupérer le fichier
+        $file = new File( $basePath . $file );
+        // récupérer les infos du fichier
+        // $mp3Infos = $getId3->analyze($file );
+        // récupérer la durée du fichier
+        $duration = $getId3->analyze( $file )['playtime_seconds'];
+        return $duration;
     }
 }
